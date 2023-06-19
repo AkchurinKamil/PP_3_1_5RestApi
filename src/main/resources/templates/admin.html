@@ -1,11 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>All Users</title>
 </head>
 <body>
-hello admin!
+<h2>All Users</h2>
 
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Last_Name</th>
+        <th>Age</th>
+        <th>Option</th>
+        <th><input align="right" type = "button" value = "logout"
+                   onclick = "window.location.href = '/logout'"/></th>
+    </tr>
+    <div th:each="users : ${allUsers}">
+        <tr>
+            <td>
+                <h th:text="${users.getId()}"></h>
+            </td>
+            <td>
+                <h th:text="${users.getName()}"></h>
+            </td>
+            <td>
+                <h th:text="${users.getLastName()}"></h>
+            </td>
+            <td>
+                <h th:text="${users.getAge()}"></h>
+            </td>
+            <td>
+                <a th:href="@{admin/{id}/edit(id=${users.getId()})}">Edit</a>
+            </td>
+            <td>
+                <form th:method="DELETE" th:action="@{/admin/{id}(id=${users.getId()})}">
+                    <input type="submit" value="Delete"/>
+                </form>
+            </td>
+        </tr>
+
+    </div>
+</table>
+<br/>
+<hr/>
+
+<a href="admin/new">Add</a>
+<br/>
 </body>
 </html>
