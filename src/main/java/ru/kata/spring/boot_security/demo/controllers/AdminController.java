@@ -8,40 +8,39 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
-import ru.kata.spring.boot_security.demo.services.UserDetailsServiceImpl;
+import ru.kata.spring.boot_security.demo.services.UserService;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    private final RoleRepository roleRepository;
 
-    private UserDetailsServiceImpl userDetailsService;
+    private final RoleRepository roleRepository;
+    private UserService userService;
 
     @Autowired
-    public AdminController(UserDetailsServiceImpl userDetailsService, RoleRepository roleRepository) {
-        this.userDetailsService = userDetailsService;
+    public AdminController(UserService userService, RoleRepository roleRepository) {
+        this.userService = userService;
         this.roleRepository = roleRepository;
     }
 
     @GetMapping
     public String userList(Model model) {
-        model.addAttribute("allUsers", userDetailsService.allUsers());
+        model.addAttribute("allUsers", userService.allUsers());
         return "admin";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Long id) {
-        userDetailsService.deleteUser(id);
+        userService.deleteUser(id);
         return "redirect:/admin";
     }
 
 
-
     @PostMapping
     public String create(@ModelAttribute("user") User user) {
-        userDetailsService.addUsers(user);
+        userService.addUsers(user);
         return "redirect:/admin";
     }
 
@@ -59,7 +58,7 @@ public class AdminController {
 
     @GetMapping("/{id}/edit")
     public ModelAndView editUser(@PathVariable(name = "id") Long id) {
-        User user = userDetailsService.findUserById(id);
+        User user = userService.findUserById(id);
         ModelAndView mav = new ModelAndView("edit");
         mav.addObject("user", user);
 
@@ -72,7 +71,7 @@ public class AdminController {
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("user") User user) {
-        userDetailsService.update(user);
+        userService.update(user);
         return "redirect:/admin";
     }
 }

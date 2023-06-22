@@ -1,10 +1,12 @@
 package ru.kata.spring.boot_security.demo.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -13,7 +15,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name ="name", nullable = false)
+    @Column(name ="name", nullable = false, unique = true)
     private String name;
     @Column(name = "last_name", nullable = false)
     private String lastName;
@@ -48,7 +50,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
     @Override
     public String getPassword(){
