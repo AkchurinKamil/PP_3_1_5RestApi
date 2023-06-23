@@ -3,31 +3,34 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
+import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
-import java.util.List;
+import java.security.Principal;
+
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final RoleRepository roleRepository;
+    private RoleService roleService;
     private UserService userService;
 
     @Autowired
-    public AdminController(UserService userService, RoleRepository roleRepository) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
     @GetMapping
-    public String userList(Model model) {
-        model.addAttribute("allUsers", userService.allUsers());
+    public String allUsers(ModelMap model, Principal principal) {
+        model.addAttribute("user", userService.findByName(principal.getName()));
+        model.addAttribute("listOfUsers", userService.allUsers());
+        model.addAttribute("listOfRoles", roleService.getAllRoles());
         return "admin";
     }
 
@@ -46,33 +49,26 @@ public class AdminController {
 
 
     @GetMapping("/new")
-    public ModelAndView newUser() {
-        User user = new User();
-        ModelAndView mav = new ModelAndView("new");
-        mav.addObject("user", user);
-        List<Role> roles = (List<Role>) roleRepository.findAll();
-        mav.addObject("allRoles", roles);
-
-        return mav;
+    public String addNewUser(ModelMap model, @ModelAttribute("user") User user) {
+        new ModelAndView("new");
+        model.addAttribute("roles", roleService.getAllRoles());
+        return "admin";
     }
 
     @GetMapping("/{id}/edit")
-    public ModelAndView editUser(@PathVariable(name = "id") Long id) {
-        User user = userService.findUserById(id);
-        ModelAndView mav = new ModelAndView("edit");
-        mav.addObject("user", user);
+    public String editUser(Model role, @PathVariable("id") Long id, Model model) {
+        model.addAttribute("user", userService.findUserById(id));
+        role.addAttribute("listOfRoles", roleService.getAllRoles());
+        return "edit";
 
-        List<Role> roles = (List<Role>) roleRepository.findAll();
-
-        mav.addObject("allRoles", roles);
-
-        return mav;
     }
 
+
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user) {
-        userService.update(user);
-        return "redirect:/admin";
+    public String update(ModelMap model, @ModelAttribute("user") User user, @PathVariable("id") Long id) {
+        model.addAttribute("listOfRoles", roleService.getAllRoles());
+        userService.update(user, id);
+        return "redirect:/admin/";
     }
 }
 

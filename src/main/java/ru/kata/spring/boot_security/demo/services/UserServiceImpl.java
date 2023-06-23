@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
+    @Override
     public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("User not found with id " + id));
@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
     @Transactional
+    @Override
     public void deleteUser(Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
@@ -35,18 +36,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    @Override
     public User addUsers(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         return userRepository.save(user);
     }
     @Transactional
-    public void update (User user) {
+    @Override
+    public void update (User user,Long id) {
         if (!user.getPassword().equals(findUserById(user.getId()).getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.save(user);
     }
+    @Override
     public User findByName(String name) {
         return userRepository.findUserByName(name);
     }

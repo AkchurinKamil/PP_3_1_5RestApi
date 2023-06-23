@@ -6,12 +6,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
 
@@ -21,17 +18,12 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+
 
     @Autowired
-    public UserDetailsServiceImpl(UserService userService, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
     }
-
-
 
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {

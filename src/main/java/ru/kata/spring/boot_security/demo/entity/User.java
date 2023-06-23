@@ -1,12 +1,12 @@
 package ru.kata.spring.boot_security.demo.entity;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
+
 
 @Entity
 @Table(name = "users")
@@ -15,7 +15,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name ="name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
     @Column(name = "last_name", nullable = false)
     private String lastName;
@@ -23,13 +23,11 @@ public class User implements UserDetails {
     private int age;
     @Column(name = "password")
     private String password;
-    @ManyToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection <Role> roles;
-
-
+    private List<Role> roles;
 
 
     public User() {
@@ -45,19 +43,15 @@ public class User implements UserDetails {
     }
 
 
-
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+        return roles;
     }
+
     @Override
-    public String getPassword(){
-      return this.password;
+    public String getPassword() {
+        return this.password;
     }
-
-
 
 
     @Override
@@ -90,11 +84,11 @@ public class User implements UserDetails {
     }
 
 
-    public Collection<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
