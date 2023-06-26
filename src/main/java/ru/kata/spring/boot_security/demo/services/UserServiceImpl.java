@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -23,10 +24,11 @@ public class UserServiceImpl implements UserService {
                 new UsernameNotFoundException("User not found with id " + id));
     }
 
-
+    @Override
     public List<User> allUsers() {
         return userRepository.findAll();
     }
+
     @Transactional
     @Override
     public void deleteUser(Long id) {
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Transactional
     @Override
     public User addUsers(User user) {
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodedPassword);
         return userRepository.save(user);
     }
+
     @Transactional
     @Override
     public void update (User user,Long id) {
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
     }
+
     @Override
     public User findByName(String name) {
         return userRepository.findUserByName(name);
