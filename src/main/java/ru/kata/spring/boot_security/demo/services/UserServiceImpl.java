@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Transactional
     @Override
     public User addUsers(User user) {
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void update (User user,Long id) {
+    public void update (User user) {
         if (!user.getPassword().equals(findUserById(user.getId()).getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
