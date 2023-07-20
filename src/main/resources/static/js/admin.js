@@ -8,7 +8,7 @@ $(async function () {
 async function getUsers() {
     let data = $('#userData');
     data.empty();
-    fetch("http://localhost:8080/api/roles")
+    fetch("http://localhost:8080/api/admin/roles")
         .then(response => response.json())
         .then(roles => {
             console.log(roles);
@@ -95,7 +95,7 @@ async function updateModal(id) {
         .then(response => response.json());
 
     $('#roleUpdate').empty();
-    fetch("http://localhost:8080/api/roles")
+    fetch("http://localhost:8080/api/admin/roles")
         .then(response => response.json())
         .then(roles => {
             console.log(roles);
